@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Helmet from "react-helmet";
 import Navbar from "./Layout/Navbar";
 import Box from "@mui/material/Box";
@@ -9,6 +9,8 @@ import {Redirect} from "react-router-dom";
 import jwt_decode from "jwt-decode";
 
 import userData from "../utils/userData";
+import axios from "axios";
+import Keys from "../config/Keys";
 const user = userData();
 
 export default function Login() {
@@ -18,8 +20,22 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
+    const [backend, setBackend] = useState(false);
+
     if (errors.server) {
         console.log(errors.server);
+    }
+
+    function fetchData() {
+        let API_URL = Keys.API_URL;
+        axios.get(API_URL + "auth/init", {}).then(r => {
+            if (r.status === 200 && r.data === "init") {
+                setBackend(true);
+            }
+            console.log("Backend initialized");
+        }).catch(err => {
+            console.log(err);
+        })
     }
 
     const onChange = e => {
@@ -53,6 +69,10 @@ export default function Login() {
         })
     };
 
+    useEffect(() => {
+        fetchData()
+    }, [])
+
     return (
         <div>
             {user.role === "user" || user.role === "admin" ?
@@ -62,6 +82,15 @@ export default function Login() {
                         <Redirect to="/reset"/> :
                     <Redirect to="/users"/>
                 : ""}
+
+            {backend === true ? <div className={"backend-loading con-mid"}>
+                <div>
+                    <CircularProgress size="1rem" color={"inherit"} style={{
+                        marginBottom: "-2px",
+                    }}/>
+                    <p>The backend is loading at Heroku...</p>
+                </div>
+            </div> : ""}
 
             {loading === true ? <LinearProgress /> : ""}
             <Navbar/>

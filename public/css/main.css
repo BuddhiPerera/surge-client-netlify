@@ -68,3 +68,10 @@
     padding: 10px;
     border-radius: 5px;
 }
+
+.backend-loading {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+}
