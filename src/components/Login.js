@@ -11,6 +11,7 @@ import jwt_decode from "jwt-decode";
 import userData from "../utils/userData";
 import axios from "axios";
 import Keys from "../config/Keys";
+
 const user = userData();
 
 export default function Login() {
@@ -20,7 +21,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const [backend, setBackend] = useState(false);
+    const [backend, setBackend] = useState(true);
 
     if (errors.server) {
         console.log(errors.server);
@@ -30,11 +31,12 @@ export default function Login() {
         let API_URL = Keys.API_URL;
         axios.get(API_URL + "auth/init", {}).then(r => {
             if (r.status === 200 && r.data === "init") {
-                setBackend(true);
+                setBackend(false);
             }
             console.log("Backend initialized");
         }).catch(err => {
             console.log(err);
+            setBackend(false);
         })
     }
 
@@ -85,14 +87,20 @@ export default function Login() {
 
             {backend === true ? <div className={"backend-loading con-mid"}>
                 <div>
-                    <CircularProgress size="1rem" color={"inherit"} style={{
-                        marginBottom: "-2px",
-                    }}/>
-                    <p>The backend is loading at Heroku...</p>
+                    <CircularProgress size="1rem" color={"inherit"} style={{marginBottom: "20px"}}/>
+                    <p style={{
+                        marginBottom: "0",
+                        fontFamily: "Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif"
+                    }}>The backend is loading at Heroku</p>
+                    <span style={{
+                        color: "#606060",
+                        fontSize: "10px",
+                        fontFamily: "Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif"
+                    }}>Surge Global Assignment by Buddhi Perera</span>
                 </div>
             </div> : ""}
 
-            {loading === true ? <LinearProgress /> : ""}
+            {loading === true ? <LinearProgress/> : ""}
             <Navbar/>
             <Helmet>
                 <title>Login</title>
